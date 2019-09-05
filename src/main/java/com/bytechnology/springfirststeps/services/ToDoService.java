@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -30,5 +31,18 @@ public class ToDoService {
 
     public void deleteTodo(int id) {
         todos.removeIf(todo -> todo.getId() == id);
+    }
+
+    public Optional<Todo> retrieveToDo(int id) {
+        return todos.stream().filter(todo -> todo.getId()==id).findFirst();
+    }
+
+    public void updateToDo(Todo todo) {
+        for(int i=0;i<todos.size();i++){
+            if(todos.get(i).getId()==todo.getId()){
+                todos.get(i).setDesc(todo.getDesc());
+                todos.get(i).setTargetDate(todo.getTargetDate());
+            }
+        }
     }
 }

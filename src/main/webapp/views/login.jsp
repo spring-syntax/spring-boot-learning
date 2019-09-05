@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login page</title>
-</head>
-<body>
+<%@ include file="common/header.jspf" %>
+<%@ include file="common/navigation.jspf" %>
 <font color="RED">${errorMessage}</font>
 <form method="post">
     Username: <input name="name" type="text"/>
     Password: <input name="password" type="password"/>
     <input type="submit">
 </form>
-</body>
-</html>
+<%@ include file="common/footer.jspf" %>

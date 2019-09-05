@@ -12,7 +12,7 @@
     <form:input name="targetDate" path="targetDate" type="text" class="form-control"/>
     <form:errors path="targetDate" cssClass="text-warning"/>
   </fieldset>
-    <form:button type="submit" class="btn btn-success">Add</form:button>
+    <form:button type="submit" class="btn btn-success">Update</form:button>
 </form:form>
 </div>
 <%@ include file="common/footer.jspf" %>

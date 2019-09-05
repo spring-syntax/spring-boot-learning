@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @SessionAttributes("name")
@@ -48,6 +48,27 @@ public class ToDoController {
     @RequestMapping(value = "/delete-todo/{id}",method = RequestMethod.GET)
     public String deleteToDo(@PathVariable int id, ModelMap modelMap){
         toDoService.deleteTodo(id);
+        return "redirect:/todo-list";
+    }
+
+    @GetMapping(value = "/update-todo/{id}")
+    public String updateToDoPage(@PathVariable int id,ModelMap modelMap){
+        Optional<Todo> todo = toDoService.retrieveToDo(id);
+        if(todo.isPresent()){
+            modelMap.put("todo",todo.get());
+            System.out.println(todo);
+            return "update-todo";
+        }
+
+        return "redirect:/todo-list";
+    }
+
+    @PostMapping(value = "/update-todo/{id}")
+    public String updateToDo(ModelMap modelMap, @Valid Todo todo, BindingResult result){
+        if(result.hasErrors()){
+            return "update-todo";
+        }
+        toDoService.updateToDo(todo);
         return "redirect:/todo-list";
     }
 }
