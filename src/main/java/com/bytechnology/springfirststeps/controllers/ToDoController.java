@@ -1,6 +1,7 @@
 package com.bytechnology.springfirststeps.controllers;
 
 import com.bytechnology.springfirststeps.model.Todo;
+import com.bytechnology.springfirststeps.security.LoginService;
 import com.bytechnology.springfirststeps.services.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,27 +15,25 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@SessionAttributes("name")
 public class ToDoController {
 
     @Autowired
     ToDoService toDoService;
 
+    @Autowired
+    LoginService loginService;
+
     @RequestMapping(value = "/todo-list",method = RequestMethod.GET)
     public String loadLogin( ModelMap modelMap){
-        String name = getLoginName(modelMap);
+        String name = loginService.getLoggedInUserName();
         List<Todo> todos = toDoService.retrieveToDos(name);
         modelMap.put("todos",todos);
         return "todos";
     }
 
-    private String getLoginName(ModelMap modelMap) {
-        return (String) modelMap.get("name");
-    }
-
     @RequestMapping(value = "/add-todo",method = RequestMethod.GET)
     public String addToDoPage( ModelMap modelMap){
-        modelMap.addAttribute("todo", new Todo(0, getLoginName(modelMap), "Learning ...",
+        modelMap.addAttribute("todo", new Todo(0, loginService.getLoggedInUserName(), "Learning ...",
                 LocalDate.now().plusMonths(1), false));
         return "add-todo";
     }
@@ -44,7 +43,7 @@ public class ToDoController {
         if(result.hasErrors()){
             return "add-todo";
         }
-        String name = getLoginName(modelMap);
+        String name = loginService.getLoggedInUserName();
         toDoService.addTodo(name, todo.getDesc(), todo.getTargetDate(), false);
         return "redirect:/todo-list";
     }
@@ -58,9 +57,8 @@ public class ToDoController {
     @GetMapping(value = "/update-todo/{id}")
     public String updateToDoPage(@PathVariable int id,ModelMap modelMap){
         Optional<Todo> todo = toDoService.retrieveToDo(id);
-        if(todo.isPresent()){
+        if(todo.isPresent() && todo.get().getUser().equalsIgnoreCase(loginService.getLoggedInUserName())){
             modelMap.put("todo",todo.get());
-            System.out.println(todo);
             return "update-todo";
         }
 
